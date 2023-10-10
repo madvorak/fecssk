@@ -21,6 +21,6 @@ def OneToOne (f : A → B) : Prop := ∀ x y : A, x ≠ y → f x ≠ f y
 
 def Onto (f : A → B) : Prop := ∀ z : B, ∃ x : A, f x = z
 
-def Bijective (f : A → B) : Prop := OneToOne f ∧ Onto f 
+def Bijective (f : A → B) : Prop := OneToOne f ∧ Onto f
 
 def Equipollent (A B : Type) : Prop := ∃ f : A → B, Bijective f
