@@ -12,7 +12,7 @@
 
 [Quickstart](https://github.com/leanprover/lean4/blob/master/doc/quickstart.md)
 
-[How to install Lean 4](https://leanprover-community.github.io/get_started.html)
+[Official installation manual](https://leanprover-community.github.io/get_started.html)
 
 ### Learn Lean
 
@@ -22,6 +22,6 @@
 
 [Code from my minicourse](https://github.com/madvorak/lean4-course) (took place at ISTA last month)
 
-[Some motivation](https://youtu.be/KW8zEdOWxYI?si=4Iz9M56WTEq4Kpo6)
+[Some motivation](https://youtu.be/Dp-mQ3HxgDE?si=pldjVR-MMh5TXCai)
 
-[More motivation](https://youtu.be/Dp-mQ3HxgDE?si=pldjVR-MMh5TXCai)
+[More motivation](https://youtu.be/KW8zEdOWxYI?si=4Iz9M56WTEq4Kpo6)
