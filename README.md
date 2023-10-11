@@ -1,5 +1,7 @@
 # Formalisms Every Computer Scientist Should Know
 
+[Thomas Henzinger](https://pub.ista.ac.at/~tah/) teaches this course at [ISTA](https://ist.ac.at/home)
+
 ## Timeline
 
 [2023-10-10](Feccsk/Class01.lean)
