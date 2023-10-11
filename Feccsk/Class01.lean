@@ -24,3 +24,6 @@ def Onto (f : A → B) : Prop := ∀ z : B, ∃ x : A, f x = z
 def Bijective (f : A → B) : Prop := OneToOne f ∧ Onto f
 
 def Equipollent (A B : Type) : Prop := ∃ f : A → B, Bijective f
+
+theorem homework1 : (∃ f : A → B, OneToOne f) ∧ (∃ g : B → A, OneToOne g) → Equipollent A B := by
+  sorry
