@@ -36,7 +36,7 @@ def Transitiv {A : Type} (R : Relation A) : Prop := ∀ x y z : A, R x y ∧ R y
 
 def PartialOrdr {A : Type} (R : Relation A) : Prop := Reflexiv R ∧ Antisymmetric R ∧ Transitiv R
 
-example : PartialOrdr Nat.le := by -- about `≤` on natural numbers
+example : PartialOrdr Nat.le := by -- about (ℕ, ≤)
   constructor
   · intro x
     exact Nat.le.refl
@@ -46,7 +46,7 @@ example : PartialOrdr Nat.le := by -- about `≤` on natural numbers
   · rintro x y z ⟨hxy, hyz⟩
     exact Nat.le_trans hxy hyz
 
-example {A : Type} : PartialOrdr (@Set.Subset A) := by -- about `⊆` on a powerset of `A`
+example {A : Type} : PartialOrdr (@Set.Subset A) := by -- about (𝒫(A), ⊆)
   constructor
   · intro X
     exact Eq.subset rfl
@@ -95,10 +95,10 @@ def Set.LowerBound {α : Type} (A : Set α) (R : Relation α) (x : α) : Prop :=
   ∀ y ∈ A, R x y
 
 def Set.LeastUpperBound {α : Type} (A : Set α) (R : Relation α) (x : α) : Prop :=
-  UpperBound A R x ∧ ∀ y : A, UpperBound A R y → R y x
+  A.UpperBound R x ∧ ∀ y : α, A.UpperBound R y → R x y
 
 def Set.GreatestLowerBound {α : Type} (A : Set α) (R : Relation α) (x : α) : Prop :=
-  LowerBound A R x ∧ ∀ y : A, UpperBound A R y → R x y
+  A.LowerBound R x ∧ ∀ y : α, A.LowerBound R y → R y x
 
 def Poset.LeastUpperBound {α : Type} (P : Poset α) (x : α) : Prop :=
   Set.univ.LeastUpperBound P.R x
@@ -111,7 +111,13 @@ def Poset.GreatestLowerBound {α : Type} (P : Poset α) (x : α) : Prop :=
 -- let `(B : Set ENat)` ...
 
 example : InformationPoset.GreatestLowerBound (⊥, ⊤) := by -- the term `(⊥, ⊤)` represents [-∞, ∞]
-  constructor <;> simp
+  constructor
+  · simp
+  · intro y hy
+    simp at hy
+    specialize hy ⊥ ⊤
+    simp_all
+
 
 def CompletLattice {A : Type} (P : Poset A) : Prop :=
   ∀ B : Set A, (∃ x, B.LeastUpperBound P.R x) ∧ (∃ x, B.GreatestLowerBound P.R x)
@@ -128,9 +134,8 @@ def Fixpoint {A : Type} (F : A → A) (x : A) : Prop :=
 
 theorem KnasterTarskiFixpoint {A : Type} {P : Poset A} {F : A → A}
     (hP : CompletLattice P) (hF : Monoton P.R F) :
-  (∃ a, { x : A | P.R x (F x) }.GreatestLowerBound P.R a ∧
-    Fixpoint F a ∧ (setOf (Fixpoint F)).UpperBound P.R a) ∧
-  (∃ z, { x : A | P.R (F x) x }.LeastUpperBound P.R z ∧
-    Fixpoint F z ∧ (setOf (Fixpoint F)).UpperBound P.R z) :=
-by
-  sorry
+    (∃ z, { x : A | P.R x (F x) }.LeastUpperBound P.R z ∧
+      Fixpoint F z ∧ (setOf (Fixpoint F)).UpperBound P.R z) ∧
+    (∃ a, { x : A | P.R (F x) x }.GreatestLowerBound P.R a ∧
+      Fixpoint F a ∧ (setOf (Fixpoint F)).LowerBound P.R a) := by
+  sorry -- homework #2
