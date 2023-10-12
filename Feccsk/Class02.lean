@@ -106,7 +106,7 @@ def Poset.LeastUpperBound {α : Type} (P : Poset α) (x : α) : Prop :=
 def Poset.GreatestLowerBound {α : Type} (P : Poset α) (x : α) : Prop :=
   Set.univ.GreatestLowerBound P.R x
 
--- TODOs :
+-- TODO (didn't catch, but not needed for the homework):
 -- let `(B : Set ℕ)` if `B` is finite then ???
 -- let `(B : Set ENat)` ...
 
@@ -118,11 +118,10 @@ example : InformationPoset.GreatestLowerBound (⊥, ⊤) := by -- the term `(⊥
     specialize hy ⊥ ⊤
     simp_all
 
-
 def CompletLattice {A : Type} (P : Poset A) : Prop :=
   ∀ B : Set A, (∃ x, B.LeastUpperBound P.R x) ∧ (∃ x, B.GreatestLowerBound P.R x)
 
--- TODOs :
+-- TODO (didn't catch, but not needed for the homework):
 -- if `A` is a complete lattice, then `LeastUpperBound A` is `⊤` and `GreatestLowerBound A` is `⊥` (def?)
 -- if `A` is a complete lattice, then `LeastUpperBound ∅` is `⊥` and `GreatestLowerBound ∅` is `⊤` (lemma?)
 
@@ -135,7 +134,11 @@ def Fixpoint {A : Type} (F : A → A) (x : A) : Prop :=
 theorem KnasterTarskiFixpoint {A : Type} {P : Poset A} {F : A → A}
     (hP : CompletLattice P) (hF : Monoton P.R F) :
     (∃ z, { x : A | P.R x (F x) }.LeastUpperBound P.R z ∧
-      Fixpoint F z ∧ (setOf (Fixpoint F)).UpperBound P.R z) ∧
+      Fixpoint F z ∧ (setOf (Fixpoint F)).UpperBound P.R z ∧
+      ∀ z' : A, Fixpoint F z' ∧ (setOf (Fixpoint F)).UpperBound P.R z' →
+        z' = z) ∧
     (∃ a, { x : A | P.R (F x) x }.GreatestLowerBound P.R a ∧
-      Fixpoint F a ∧ (setOf (Fixpoint F)).LowerBound P.R a) := by
+      Fixpoint F a ∧ (setOf (Fixpoint F)).LowerBound P.R a ∧
+      ∀ a' : A, Fixpoint F a' ∧ (setOf (Fixpoint F)).LowerBound P.R a' →
+        a' = a) := by
   sorry -- homework #2
