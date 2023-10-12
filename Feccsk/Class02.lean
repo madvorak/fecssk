@@ -26,19 +26,17 @@ For `¬` we `push_neg` ...
 We drew Hasse diagrams on the blackboard [omitted here].
 -/
 
-variable {A B : Type}
+def Relation (A : Type) : Type := A → A → Prop -- basically a notation for R ⊆ A²
 
-def Relation (A : Type) : Type := A → A → Prop -- Set (A × A)
+def Reflexiv {A : Type} (R : Relation A) : Prop := ∀ x : A, R x x
 
-def Reflexiv (R : Relation A) : Prop := ∀ x : A, R x x
+def Antisymmetric {A : Type} (R : Relation A) : Prop := ∀ x y : A, R x y ∧ R y x → x = y
 
-def Antisymmetric (R : Relation A) : Prop := ∀ x y : A, R x y ∧ R y x → x = y
+def Transitiv {A : Type} (R : Relation A) : Prop := ∀ x y z : A, R x y ∧ R y z → R x z
 
-def Transitiv (R : Relation A) : Prop := ∀ x y z : A, R x y ∧ R y z → R x z
+def PartialOrdr {A : Type} (R : Relation A) : Prop := Reflexiv R ∧ Antisymmetric R ∧ Transitiv R
 
-def PartialOrdr (R : Relation A) : Prop := Reflexiv R ∧ Antisymmetric R ∧ Transitiv R
-
-example : PartialOrdr Nat.le := by
+example : PartialOrdr Nat.le := by -- about `≤` on natural numbers
   constructor
   · intro x
     exact Nat.le.refl
@@ -48,7 +46,7 @@ example : PartialOrdr Nat.le := by
   · rintro x y z ⟨hxy, hyz⟩
     exact Nat.le_trans hxy hyz
 
-example : PartialOrdr (fun X Y : Set A => X ⊆ Y) := by
+example {A : Type} : PartialOrdr (@Set.Subset A) := by -- about `⊆` on a powerset of `A`
   constructor
   · intro X
     exact Eq.subset rfl
@@ -58,48 +56,81 @@ example : PartialOrdr (fun X Y : Set A => X ⊆ Y) := by
   · rintro X Y Z ⟨hXY, hYZ⟩
     exact Set.Subset.trans hXY hYZ
 
+structure Poset (A : Type) where
+  R : Relation A
+  po : PartialOrdr R
+
+@[simp]
 def Information : Relation (EReal × EReal) :=
   fun x y : (EReal × EReal) => x.fst ≤ y.fst ∧ x.snd ≥ y.snd
 
 lemma information_po : PartialOrdr Information := by
   constructor
-  · simp [Reflexiv, Information]
+  · simp [Reflexiv]
   constructor
   · rintro x y ⟨hxy, hyx⟩
-    simp [Information] at hxy hyx
-    cases' hxy with xfst ysnd
-    cases' hyx with yfst xsnd
-    sorry -- TODO
+    unfold Information at hxy hyx
+    cases' hxy with hxfst hxsnd
+    cases' hyx with hyfst hysnd
+    ext
+    · exact le_antisymm hxfst hyfst
+    · exact le_antisymm hysnd hxsnd
   · rintro x y z ⟨hxy, hyz⟩
-    simp_all [Information]
-    sorry -- TODO
+    unfold Information at *
+    cases' hxy with xyfst xysnd
+    cases' hyz with yzfst yzsnd
+    constructor
+    · exact le_trans xyfst yzfst
+    · exact ge_trans xysnd yzsnd
 
-structure Poset where
-  R : Relation A
-  po : PartialOrdr R
+@[simp]
+def InformationPoset : Poset (EReal × EReal) := Poset.mk Information information_po
 
-def InformationPoset : @Poset (EReal × EReal) := Poset.mk Information information_po
+@[simp]
+def Set.UpperBound {α : Type} (A : Set α) (R : Relation α) (x : α) : Prop :=
+  ∀ y ∈ A, R y x
 
-def Monoton (R : Relation A) (F : A → A) : Prop := ∀ x y : A, R x y → R (F x) (F y)
+@[simp]
+def Set.LowerBound {α : Type} (A : Set α) (R : Relation α) (x : α) : Prop :=
+  ∀ y ∈ A, R x y
 
-def Fixpoint (F : A → A) (x : A) : Prop := F x = x
+def Set.LeastUpperBound {α : Type} (A : Set α) (R : Relation α) (x : α) : Prop :=
+  UpperBound A R x ∧ ∀ y : A, UpperBound A R y → R y x
 
-def UpperBound (A' : Set A) (R : Relation A) (x : A) : Prop := ∀ y ∈ A', R y x
-def LowerBound (A' : Set A) (R : Relation A) (x : A) : Prop := ∀ y ∈ A', R x y
+def Set.GreatestLowerBound {α : Type} (A : Set α) (R : Relation α) (x : α) : Prop :=
+  LowerBound A R x ∧ ∀ y : A, UpperBound A R y → R x y
 
-def LeastUpperBound (A' : Set A) (R : Relation A) (x : A) : Prop :=
-  UpperBound A' R x ∧ ∀ y : A, UpperBound A' R y → R y x
+def Poset.LeastUpperBound {α : Type} (P : Poset α) (x : α) : Prop :=
+  Set.univ.LeastUpperBound P.R x
 
-def GreatestLowerBound (A' : Set A) (R : Relation A) (x : A) : Prop :=
-  LowerBound A' R x ∧ ∀ y : A, UpperBound A' R y → R x y
+def Poset.GreatestLowerBound {α : Type} (P : Poset α) (x : α) : Prop :=
+  Set.univ.GreatestLowerBound P.R x
 
 -- TODOs :
--- let `(B : Set ℕ)` if `B` is finite then `LeastUpperBound B` is `max B` else `LeastUpperBound B` doesn't exist
--- let `(B : Set ℕ with inf)` ... is `inf`
--- information poset has `[-inf, +inf]` as its
+-- let `(B : Set ℕ)` if `B` is finite then ???
+-- let `(B : Set ENat)` ...
 
-def CompleteLattic (R : Relation A) : Prop :=
-  ∀ B : Set A, (∃ x, LeastUpperBound B R x) ∧ (∃ x, GreatestLowerBound B R x)
+example : InformationPoset.GreatestLowerBound (⊥, ⊤) := by -- the term `(⊥, ⊤)` represents [-∞, ∞]
+  constructor <;> simp
 
--- if A,≤ is a complete lattice, then `LeastUpperBound A` is `⊤` and `GreatestLowerBound A` is `⊥`
--- if A,≤ is a complete lattice, then `LeastUpperBound ∅` is `⊥` and `GreatestLowerBound A` is `⊤`
+def CompletLattice {A : Type} (P : Poset A) : Prop :=
+  ∀ B : Set A, (∃ x, B.LeastUpperBound P.R x) ∧ (∃ x, B.GreatestLowerBound P.R x)
+
+-- TODOs :
+-- if `A` is a complete lattice, then `LeastUpperBound A` is `⊤` and `GreatestLowerBound A` is `⊥` (def?)
+-- if `A` is a complete lattice, then `LeastUpperBound ∅` is `⊥` and `GreatestLowerBound ∅` is `⊤` (lemma?)
+
+def Monoton {A : Type} (R : Relation A) (F : A → A) : Prop :=
+  ∀ x y : A, R x y → R (F x) (F y)
+
+def Fixpoint {A : Type} (F : A → A) (x : A) : Prop :=
+  F x = x
+
+theorem KnasterTarskiFixpoint {A : Type} {P : Poset A} {F : A → A}
+    (hP : CompletLattice P) (hF : Monoton P.R F) :
+  (∃ a, { x : A | P.R x (F x) }.GreatestLowerBound P.R a ∧
+    Fixpoint F a ∧ (setOf (Fixpoint F)).UpperBound P.R a) ∧
+  (∃ z, { x : A | P.R (F x) x }.LeastUpperBound P.R z ∧
+    Fixpoint F z ∧ (setOf (Fixpoint F)).UpperBound P.R z) :=
+by
+  sorry
