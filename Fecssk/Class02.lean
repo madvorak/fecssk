@@ -128,17 +128,17 @@ def CompletLattice {A : Type} (P : Poset A) : Prop :=
 def Monoton {A : Type} (R : Relation A) (F : A → A) : Prop :=
   ∀ x y : A, R x y → R (F x) (F y)
 
-def Fixpoint {A : Type} (F : A → A) (x : A) : Prop :=
-  F x = x
+def Fixpoints {A : Type} (F : A → A) : Set A :=
+  { x : A | F x = x }
 
-theorem KnasterTarskiFixpoint {A : Type} {P : Poset A} {F : A → A}
+def UniqueMember {A : Type} (S : Set A) (a : A) : Prop :=
+  a ∈ S ∧ ∀ b ∈ S, b = a
+
+theorem fixpointKnasterTarski {A : Type} {P : Poset A} {F : A → A}
     (hP : CompletLattice P) (hF : Monoton P.R F) :
-    (∃ z, { x : A | P.R x (F x) }.LeastUpperBound P.R z ∧
-      Fixpoint F z ∧ (setOf (Fixpoint F)).UpperBound P.R z ∧
-      ∀ z' : A, Fixpoint F z' ∧ (setOf (Fixpoint F)).UpperBound P.R z' →
-        z' = z) ∧
-    (∃ a, { x : A | P.R (F x) x }.GreatestLowerBound P.R a ∧
-      Fixpoint F a ∧ (setOf (Fixpoint F)).LowerBound P.R a ∧
-      ∀ a' : A, Fixpoint F a' ∧ (setOf (Fixpoint F)).LowerBound P.R a' →
-        a' = a) := by
+  (∃ z, UniqueMember (Fixpoints F ∩ (Fixpoints F).UpperBound P.R) z) ∧
+  (∃ a, UniqueMember (Fixpoints F ∩ (Fixpoints F).LowerBound P.R) a) :=
+by
   sorry -- homework #2
+
+-- hint: `hP { x : A | P.R x (F x) }` and `hP { x : A | P.R (F x) x }` respectively

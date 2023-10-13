@@ -4,9 +4,9 @@
 
 ## Timeline
 
-[2023-10-10](Feccsk/Class01.lean)
+[2023-10-10](Fecssk/Class01.lean)
 
-[2023-10-12](Feccsk/Class02.lean)
+[2023-10-12](Fecssk/Class02.lean)
 
 ## How to Lean 4
 

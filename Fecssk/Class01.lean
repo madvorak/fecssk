@@ -30,5 +30,6 @@ def Bijective (f : A → B) : Prop := OneToOne f ∧ Onto f
 
 def Equipollent (A B : Type) : Prop := ∃ f : A → B, Bijective f
 
-theorem SchroderBernstein : (∃ f : A → B, OneToOne f) ∧ (∃ g : B → A, OneToOne g) → Equipollent A B := by
+theorem equipollentSchroderBernstein : (∃ f : A → B, OneToOne f) ∧ (∃ g : B → A, OneToOne g) → Equipollent A B :=
+by
   sorry -- homework #1
