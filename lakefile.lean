@@ -10,6 +10,6 @@ require mathlib from git
 
 @[default_target]
 lean_lib Fecssk {
-  globs := #[.submodules `Feccsk] 
+  globs := #[.submodules `Fecssk]
   moreLeanArgs := #["-DautoImplicit=false"]
 }

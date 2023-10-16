@@ -3,7 +3,7 @@ import Mathlib.Data.Real.Basic
 /-
 ## What is a proof?
 
-We will do something similar to natural deduction.
+We will write proofs in a style that is similar to natural deduction.
 -/
 
 def Bound (f : ℝ → ℝ) (b : ℝ) : Prop := ∀ x : ℝ, f x ≤ b
