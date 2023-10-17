@@ -1,7 +1,7 @@
 import Mathlib.Data.Real.Basic
 
 /-
-## What is a proof?
+# What is a proof?
 
 We will write proofs in a style that is similar to natural deduction.
 -/

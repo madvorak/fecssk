@@ -21,7 +21,7 @@ For `¬` we `push_neg` ...
 (from left to right is more useful)
 
 
-## Lattices and fixpoints
+# Lattices and fixpoints
 
 We drew Hasse diagrams on the blackboard [omitted here].
 -/
@@ -202,16 +202,18 @@ lemma fixpoint_of_pre_pos {A : Type} (P : Poset A) {F : A → A} {x : A}
   apply P.po.right.left
   exact ⟨posF, preF⟩
 
+def GreatFixpoint {A : Type} (P : Poset A) (F : A → A) : Set A :=
+  Fixpoint F ∩ (setOf (Fixpoint F)).UpperBound P.R
+
+def LeastFixpoint {A : Type} (P : Poset A) (F : A → A) : Set A :=
+  Fixpoint F ∩ (setOf (Fixpoint F)).LowerBound P.R
+
 theorem fixpointKnasterTarski {A : Type} {P : Poset A} {F : A → A}
     (hP : CompleteLatice P) (hF : Monoton P.R F) :
-  -- the least upper bound of all prefixpoints (ŷ) is the great fixpoint
-  -- (i.e., ŷ is unique "fixpoint AND upper bound of all fixpoints")
-  UniqueMember (Fixpoint F ∩ (setOf (Fixpoint F)).UpperBound P.R)
-    (hP.supre (setOf (Prefixpoint P.R F))) ∧
-  -- the great lower bound of all posfixpoints (ẑ) is the least fixpoint
-  -- (i.e., ẑ is unique "fixpoint AND lower bound of all fixpoints")
-  UniqueMember (Fixpoint F ∩ (setOf (Fixpoint F)).LowerBound P.R)
-    (hP.infim (setOf (Posfixpoint P.R F))) :=
+    -- the least upper bound of all prefixpoints (ŷ) is the great fixpoint
+    UniqueMember (GreatFixpoint P F) (hP.supre (setOf (Prefixpoint P.R F))) ∧
+    -- the great lower bound of all posfixpoints (ẑ) is the least fixpoint
+    UniqueMember (LeastFixpoint P F) (hP.infim (setOf (Posfixpoint P.R F))) :=
 by
   rcases P.po with ⟨refle, antis, tranz⟩
   have glb := hP.infim_is_GLB (setOf (Posfixpoint P.R F))
