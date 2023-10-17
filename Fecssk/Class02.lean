@@ -94,23 +94,27 @@ def Set.UpperBound {α : Type} (A : Set α) (R : Relation α) (x : α) : Prop :=
 def Set.LowerBound {α : Type} (A : Set α) (R : Relation α) (x : α) : Prop :=
   ∀ y ∈ A, R x y
 
+@[simp]
 def Set.LeastUpperBound {α : Type} (A : Set α) (R : Relation α) (x : α) : Prop :=
   A.UpperBound R x ∧ ∀ y : α, A.UpperBound R y → R x y
 
-def Set.GreatestLowerBound {α : Type} (A : Set α) (R : Relation α) (x : α) : Prop :=
+@[simp]
+def Set.GreatLowerBound {α : Type} (A : Set α) (R : Relation α) (x : α) : Prop :=
   A.LowerBound R x ∧ ∀ y : α, A.LowerBound R y → R y x
 
+@[simp]
 def Poset.LeastUpperBound {α : Type} (P : Poset α) (x : α) : Prop :=
   Set.univ.LeastUpperBound P.R x
 
-def Poset.GreatestLowerBound {α : Type} (P : Poset α) (x : α) : Prop :=
-  Set.univ.GreatestLowerBound P.R x
+@[simp]
+def Poset.GreatLowerBound {α : Type} (P : Poset α) (x : α) : Prop :=
+  Set.univ.GreatLowerBound P.R x
 
 -- TODO (didn't catch, but not needed for the homework):
 -- let `(B : Set ℕ)` if `B` is finite then ???
 -- let `(B : Set ENat)` ...
 
-example : InformationPoset.GreatestLowerBound (⊥, ⊤) := by -- the term `(⊥, ⊤)` represents [-∞, ∞]
+example : InformationPoset.GreatLowerBound (⊥, ⊤) := by -- the term `(⊥, ⊤)` represents [-∞, ∞]
   constructor
   · simp
   · intro y hy
@@ -118,27 +122,94 @@ example : InformationPoset.GreatestLowerBound (⊥, ⊤) := by -- the term `(⊥
     specialize hy ⊥ ⊤
     simp_all
 
-def CompletLattice {A : Type} (P : Poset A) : Prop :=
-  ∀ B : Set A, (∃ x, B.LeastUpperBound P.R x) ∧ (∃ x, B.GreatestLowerBound P.R x)
+def CompleteLatice {A : Type} (P : Poset A) : Prop :=
+  ∀ B : Set A, (∃ x, B.LeastUpperBound P.R x) ∧ (∃ x, B.GreatLowerBound P.R x)
 
--- TODO (didn't catch, but not needed for the homework):
--- if `A` is a complete lattice, then `LeastUpperBound A` is `⊤` and `GreatestLowerBound A` is `⊥` (def?)
--- if `A` is a complete lattice, then `LeastUpperBound ∅` is `⊥` and `GreatestLowerBound ∅` is `⊤` (lemma?)
+@[simp]
+noncomputable def CompleteLatice.supre {A : Type} {P : Poset A} (hP : CompleteLatice P) (S : Set A) : A :=
+  Classical.choose (hP S).1 -- `hP.supre S` denotes `⊔S` in given complete lattice
+
+@[simp]
+noncomputable def CompleteLatice.infim {A : Type} {P : Poset A} (hP : CompleteLatice P) (S : Set A) : A :=
+  Classical.choose (hP S).2 -- `hP.infim S` denotes `⊓S` in given complete lattice
+
+lemma CompleteLatice.supre_is_LUB {A : Type} {P : Poset A} (hP : CompleteLatice P) (S : Set A) :
+    S.LeastUpperBound P.R (hP.supre S) := by
+  apply Classical.choose_spec
+
+lemma CompleteLatice.infim_is_GLB {A : Type} {P : Poset A} (hP : CompleteLatice P) (S : Set A) :
+    S.GreatLowerBound P.R (hP.infim S) := by
+  apply Classical.choose_spec
+
+@[simp]
+noncomputable def CompleteLatice.top {A : Type} {P : Poset A} (hP : CompleteLatice P) : A :=
+  Classical.choose (hP Set.univ).1 -- `hP.top` denotes `⊤` in given complete lattice
+
+@[simp]
+noncomputable def CompleteLatice.bot {A : Type} {P : Poset A} (hP : CompleteLatice P) : A :=
+  Classical.choose (hP Set.univ).2 -- `hP.bot` denotes `⊥` in given complete lattice
+
+lemma CompleteLatice.top_is_LUB {A : Type} {P : Poset A} (hP : CompleteLatice P) :
+    P.LeastUpperBound hP.top := by
+  apply Classical.choose_spec
+
+lemma CompleteLatice.bot_is_GLB {A : Type} {P : Poset A} (hP : CompleteLatice P) :
+    P.GreatLowerBound hP.bot := by
+  apply Classical.choose_spec
+
+lemma CompleteLatice.supre_empty_is_bot {A : Type} {P : Poset A} (hP : CompleteLatice P) :
+    hP.supre ∅ = hP.bot := by
+  simp_all
+
+lemma CompleteLatice.infim_empty_is_top {A : Type} {P : Poset A} (hP : CompleteLatice P) :
+    hP.infim ∅ = hP.top := by
+  simp_all
 
 def Monoton {A : Type} (R : Relation A) (F : A → A) : Prop :=
   ∀ x y : A, R x y → R (F x) (F y)
 
-def Fixpoints {A : Type} (F : A → A) : Set A :=
-  { x : A | F x = x }
-
 def UniqueMember {A : Type} (S : Set A) (a : A) : Prop :=
   a ∈ S ∧ ∀ b ∈ S, b = a
 
-theorem fixpointKnasterTarski {A : Type} {P : Poset A} {F : A → A}
-    (hP : CompletLattice P) (hF : Monoton P.R F) :
-  (∃ z, UniqueMember (Fixpoints F ∩ (Fixpoints F).UpperBound P.R) z) ∧
-  (∃ a, UniqueMember (Fixpoints F ∩ (Fixpoints F).LowerBound P.R) a) :=
-by
-  sorry -- homework #2
+def Fixpoint {A : Type} (F : A → A) (x : A) : Prop :=
+  F x = x
 
--- hint: `hP { x : A | P.R x (F x) }` and `hP { x : A | P.R (F x) x }` respectively
+def Prefixpoint {A : Type} (R : Relation A) (F : A → A) (x : A) : Prop :=
+  R x (F x)
+
+def Posfixpoint {A : Type} (R : Relation A) (F : A → A) (x : A) : Prop :=
+  R (F x) x
+
+lemma prefixpoint_of_fixpoint {A : Type} (P : Poset A) {F : A → A} {x : A}
+    (fpx : Fixpoint F x) :
+    Prefixpoint P.R F x := by
+  unfold Prefixpoint
+  unfold Fixpoint at fpx
+  rw [fpx]
+  apply P.po.left
+
+lemma posfixpoint_of_fixpoint {A : Type} (P : Poset A) {F : A → A} {x : A}
+    (fpx : Fixpoint F x) :
+    Posfixpoint P.R F x := by
+  unfold Posfixpoint
+  unfold Fixpoint at fpx
+  rw [fpx]
+  apply P.po.left
+
+lemma fixpoint_of_pre_pos {A : Type} (P : Poset A) {F : A → A} {x : A}
+    (preF : Prefixpoint P.R F x) (posF : Posfixpoint P.R F x) :
+    Fixpoint F x := by
+  apply P.po.right.left
+  exact ⟨posF, preF⟩
+
+theorem fixpointKnasterTarski {A : Type} {P : Poset A} {F : A → A}
+    (hP : CompleteLatice P) (hF : Monoton P.R F) :
+  -- the least upper bound of all prefixpoints (ŷ) is the great fixpoint
+  -- (i.e., ŷ is unique "fixpoint & upper bound of all fixpoints")
+  UniqueMember (Fixpoint F ∩ (setOf (Fixpoint F)).UpperBound P.R)
+    (hP.supre (setOf (Prefixpoint P.R F))) ∧
+  -- the great lower bound of all posfixpoints (ẑ) is the least fixpoint
+  -- (i.e., ẑ is unique "fixpoint & lower bound of all fixpoints")
+  UniqueMember (Fixpoint F ∩ (setOf (Fixpoint F)).LowerBound P.R)
+    (hP.infim (setOf (Posfixpoint P.R F))) :=
+by sorry -- homework #2
