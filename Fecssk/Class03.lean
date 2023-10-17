@@ -13,12 +13,12 @@ def InfimContinuous {A : Type} {P : Poset A} (hP : CompleteLatice P) (F : A → 
 
 theorem greatFixpoint_of_supreContinuous {A : Type} {P : Poset A} {F : A → A}
     (hP : CompleteLatice P) (hF : SupreContinuous hP F) :
-    GreatFixpoint P F (hP.supre { F^[i] hP.bot | i : ℕ }) := by
+    LeastFixpoint P F (hP.supre { F^[i] hP.bot | i : ℕ }) := by
   sorry -- homework #3a
 
 theorem leastFixpoint_of_infimContinuous {A : Type} {P : Poset A} {F : A → A}
     (hP : CompleteLatice P) (hF : InfimContinuous hP F) :
-    LeastFixpoint P F (hP.infim { F^[i] hP.bot | i : ℕ }) := by
+    GreatFixpoint P F (hP.infim { F^[i] hP.top | i : ℕ }) := by
   sorry -- homework #3b
 
 
