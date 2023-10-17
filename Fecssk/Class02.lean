@@ -205,11 +205,17 @@ lemma fixpoint_of_pre_pos {A : Type} (P : Poset A) {F : A → A} {x : A}
 theorem fixpointKnasterTarski {A : Type} {P : Poset A} {F : A → A}
     (hP : CompleteLatice P) (hF : Monoton P.R F) :
   -- the least upper bound of all prefixpoints (ŷ) is the great fixpoint
-  -- (i.e., ŷ is unique "fixpoint & upper bound of all fixpoints")
+  -- (i.e., ŷ is unique "fixpoint AND upper bound of all fixpoints")
   UniqueMember (Fixpoint F ∩ (setOf (Fixpoint F)).UpperBound P.R)
     (hP.supre (setOf (Prefixpoint P.R F))) ∧
   -- the great lower bound of all posfixpoints (ẑ) is the least fixpoint
-  -- (i.e., ẑ is unique "fixpoint & lower bound of all fixpoints")
+  -- (i.e., ẑ is unique "fixpoint AND lower bound of all fixpoints")
   UniqueMember (Fixpoint F ∩ (setOf (Fixpoint F)).LowerBound P.R)
     (hP.infim (setOf (Posfixpoint P.R F))) :=
-by sorry -- homework #2
+by
+  rcases P.po with ⟨refle, antis, tranz⟩
+  have glb := hP.infim_is_GLB (setOf (Posfixpoint P.R F))
+  have lub := hP.supre_is_LUB (setOf (Prefixpoint P.R F))
+  set y := hP.supre (setOf (Prefixpoint P.R F))
+  set z := hP.infim (setOf (Posfixpoint P.R F))
+  sorry -- homework #2
