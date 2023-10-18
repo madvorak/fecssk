@@ -210,9 +210,9 @@ def LeastFixpoint {A : Type} (P : Poset A) (F : A → A) : Set A :=
 
 theorem fixpointKnasterTarski {A : Type} {P : Poset A} {F : A → A}
     (hP : CompleteLatice P) (hF : Monoton P.R F) :
-    -- the least upper bound of all prefixpoints (ŷ) is the great fixpoint
+    -- the least upper bound of all prefixpoints (ŷ) is the (unique) great fixpoint
     UniqueMember (GreatFixpoint P F) (hP.supre (setOf (Prefixpoint P.R F))) ∧
-    -- the great lower bound of all posfixpoints (ẑ) is the least fixpoint
+    -- the great lower bound of all posfixpoints (ẑ) is the (unique) least fixpoint
     UniqueMember (LeastFixpoint P F) (hP.infim (setOf (Posfixpoint P.R F))) :=
 by
   rcases P.po with ⟨refle, antis, tranz⟩
