@@ -10,12 +10,9 @@ def InfimContinuous {A : Type} {P : Poset A} (hP : CompleteLatice P) (F : A → 
     F (hP.infim { s n | n : ℕ }) = hP.infim { F (s n) | n : ℕ }
 
 lemma CompleteLatice.supre_pair {A : Type} {P : Poset A} (hP : CompleteLatice P) (a b : A) :
-    hP.supre {a, b} = b ↔ P.R a b := by
-  obtain ⟨upp, lea⟩ := hP.supre_is_LUB {a, b}
+    P.R a b ↔ hP.supre {a, b} = b := by
+  obtain ⟨upb, lea⟩ := hP.supre_is_LUB {a, b}
   constructor
-  · intro supr
-    rw [supr] at upp
-    exact upp a (by simp)
   · intro hab
     apply P.po.right.left
     constructor
@@ -24,7 +21,27 @@ lemma CompleteLatice.supre_pair {A : Type} {P : Poset A} (hP : CompleteLatice P)
       constructor
       · exact hab
       · apply P.po.left
-    · exact upp b (by simp)
+    · exact upb b (by simp)
+  · intro supr
+    rw [supr] at upb
+    exact upb a (by simp)
+
+lemma CompleteLatice.infim_pair {A : Type} {P : Poset A} (hP : CompleteLatice P) (a b : A) :
+    P.R a b ↔ hP.infim {a, b} = a := by
+  obtain ⟨lwb, gre⟩ := hP.infim_is_GLB {a, b}
+  constructor
+  · intro hab
+    apply P.po.right.left
+    constructor
+    · exact lwb a (by simp)
+    · apply gre
+      simp [Set.UpperBound]
+      constructor
+      · apply P.po.left
+      · exact hab
+  · intro infm
+    rw [infm] at lwb
+    exact lwb b (by simp)
 
 lemma monoton_of_supreContinuous {A : Type} {P : Poset A} {hP : CompleteLatice P} {F : A → A}
     (suprec : SupreContinuous hP F) :
@@ -63,9 +80,50 @@ lemma monoton_of_supreContinuous {A : Type} {P : Poset A} {hP : CompleteLatice P
         | succ n =>
           right
           exact hyp.symm
-  rw [show CompleteLatice.supre hP {x, y} = y by rwa [hP.supre_pair x y]] at supr
-  rw [← hP.supre_pair]
-  exact supr.symm
+  rw [hP.supre_pair] at hxy ⊢
+  rw [hxy] at supr
+  rw [← supr]
+
+lemma monoton_of_infimContinuous {A : Type} {P : Poset A} {hP : CompleteLatice P} {F : A → A}
+    (infimc : InfimContinuous hP F) :
+    Monoton P.R F := by
+  intro x y hxy
+  specialize infimc
+    (fun i => match i with
+      | .zero => y
+      | .succ _ => x
+    )
+    (by
+      intro n
+      cases n with
+      | zero => convert hxy
+      | succ n => convert P.po.left x
+    )
+  have infm : F (hP.infim {x, y}) = hP.infim {F x, F y}
+  · convert infimc using 1 <;>
+    · congr
+      ext a
+      simp only [Set.mem_singleton_iff, Set.mem_insert_iff, Set.mem_setOf_eq]
+      constructor
+      · intro hyp
+        cases hyp with
+        | inl hax =>
+          use 1
+          simp [hax]
+        | inr hay =>
+          use 0
+          simp [hay]
+      · rintro ⟨n, hyp⟩
+        cases n with
+        | zero =>
+          right
+          exact hyp.symm
+        | succ n =>
+          left
+          exact hyp.symm
+  rw [hP.infim_pair] at hxy ⊢
+  rw [hxy] at infm
+  rw [← infm]
 
 -- ## Homework #3
 
