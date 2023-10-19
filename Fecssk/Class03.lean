@@ -1,5 +1,5 @@
 import Fecssk.Class02
-import Mathlib.Data.Stream.Defs
+import Mathlib.Data.Stream.Init
 
 
 def SupreContinuous {A : Type} {P : Poset A} (hP : CompleteLatice P) (F : A → A) : Prop :=
@@ -143,20 +143,24 @@ by
 
 -- ## Homework #4
 
-namespace experimental
+namespace infinite_words
 
-abbrev Word := Stream' (Fin 2)
+abbrev IW := Stream' (Fin 2)
 
 -- Let `S` be the largest `X ⊆ 𝒫({0,1}^ω)` such that `X ⊆ 01X ∪ 10X`.
 
-def S : Set Word := fun w =>
-  ∃ X : Set Word, w ∈ X ∧
+def S : Set IW := fun w =>
+  ∃ X : Set IW, w ∈ X ∧
     X ⊆ (Stream'.cons 0 '' (Stream'.cons 1 '' X)) ∪ (Stream'.cons 1 '' (Stream'.cons 0 '' X))
 
 -- Prove `∀ x : {0,1}^ω` , `x ∈ S` ↔ every finite prefix of `x` of even length has #`0` = #`1`.
 
-example : ∀ x : Word, x ∈ S ↔ ∀ n : ℕ, (x.take (2*n)).count 0 = (x.take (2*n)).count 1 :=
-by
-  sorry
+example : ∀ x : IW, x ∈ S ↔ ∀ n : ℕ, (x.take (2*n)).count 0 = (x.take (2*n)).count 1 := by
+  intro x
+  constructor
+  · sorry
+  · intro hyp
+    refine ⟨{ x | ∀ n : ℕ, (x.take (2*n)).count 0 = (x.take (2*n)).count 1 }, hyp, ?_⟩
+    sorry
 
-end experimental
+end infinite_words
