@@ -2,6 +2,8 @@
 
 [Thomas Henzinger](https://pub.ista.ac.at/~tah/) teaches this course at [ISTA](https://ist.ac.at/home)
 
+[LaTeX transcribes from the lectures](https://github.com/saona-raimundo/formalisms_every_computer_scientist_should_know)
+
 ## Timeline
 
 [2023-10-10](Fecssk/Class01.lean)
