@@ -1,4 +1,5 @@
 import Fecssk.Class02
+import Mathlib.Data.Stream.Defs
 
 
 def SupreContinuous {A : Type} {P : Poset A} (hP : CompleteLatice P) (F : A → A) : Prop :=
@@ -129,17 +130,33 @@ lemma monoton_of_infimContinuous {A : Type} {P : Poset A} {hP : CompleteLatice P
 
 theorem leastFixpoint_of_supreContinuous {A : Type} {P : Poset A} {F : A → A}
     (hP : CompleteLatice P) (hF : SupreContinuous hP F) :
-    LeastFixpoint P F (hP.supre { F^[i] hP.bot | i : ℕ }) := by
+    LeastFixpoint P F (hP.supre { F^[i] hP.bot | i : ℕ }) :=
+by
   sorry -- homework #3 (part 1)
 
 theorem greatFixpoint_of_infimContinuous {A : Type} {P : Poset A} {F : A → A}
     (hP : CompleteLatice P) (hF : InfimContinuous hP F) :
-    GreatFixpoint P F (hP.infim { F^[i] hP.top | i : ℕ }) := by
+    GreatFixpoint P F (hP.infim { F^[i] hP.top | i : ℕ }) :=
+by
   sorry -- homework #3 (part 2)
 
 
 -- ## Homework #4
 
+namespace experimental
+
+abbrev Word := Stream' (Fin 2)
+
 -- Let `S` be the largest `X ⊆ 𝒫({0,1}^ω)` such that `X ⊆ 01X ∪ 10X`.
+
+def S : Set Word := fun w =>
+  ∃ X : Set Word, w ∈ X ∧
+    X ⊆ (Stream'.cons 0 '' (Stream'.cons 1 '' X)) ∪ (Stream'.cons 1 '' (Stream'.cons 0 '' X))
+
 -- Prove `∀ x : {0,1}^ω` , `x ∈ S` ↔ every finite prefix of `x` of even length has #`0` = #`1`.
--- We need to prove `←` by coïnduction on `S` and prove `→` by induction on `ℕ` (prefix lengths).
+
+example : ∀ x : Word, x ∈ S ↔ ∀ n : ℕ, (x.take (2*n)).count 0 = (x.take (2*n)).count 1 :=
+by
+  sorry
+
+end experimental
