@@ -26,11 +26,11 @@
 
 ### Learn Lean
 
-[Natural Number Game](https://adam.math.hhu.de/#/g/hhu-adam/NNG4) (fun interactive tutorial)
+[Natural Number Game](https://adam.math.hhu.de/#/g/hhu-adam/NNG4) (fun interactive tutorial by Kevin Buzzard et al.)
 
 [Overview of basic tactics](https://github.com/madvorak/lean4-tactics) (things you use in proofs, not definitions)
 
-[Code from my minicourse](https://github.com/madvorak/lean4-course) (took place at ISTA last month)
+[Code from my minicourse](https://github.com/madvorak/lean4-course) (took place at ISTA in 2023-09)
 
 [Some motivation](https://youtu.be/Dp-mQ3HxgDE?si=pldjVR-MMh5TXCai)
 

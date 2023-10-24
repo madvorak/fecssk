@@ -65,8 +65,9 @@ We have alphabet `Σ` with linear order `≤`.
 ∀ x ∈ Σ∗, merge x ε = x
 
 ∀ x ∈ Σ∗, ∀ y ∈ Σ∗, ∀ a ∈ Σ, ∀ b ∈ Σ,
-merge (a::x) (b::y) = if a ≤ b then a :: merge x (b::y)
-                               else b :: merge (a::x) y
+  merge (a::x) (b::y) = if a ≤ b
+                        then a :: merge x (b::y)
+                        else b :: merge (a::x) y
 
 For a string-processing program, keep all the rules (induction).
 For a stream-processing program, keep only the last rule (coinduction).
@@ -139,7 +140,9 @@ by
 
 -- ### Sorting lists
 
-def merge [LE α] [@DecidableRel α (. ≤ .)] : List α → List α → List α
+variable [LE α] [@DecidableRel α (· ≤ ·)]
+
+def merge : List α → List α → List α
 | [ ]   , y      => y
 | x     , [ ]    => x
 | a :: x, b :: y => if a ≤ b
@@ -153,30 +156,35 @@ def split : List α → List α × List α
 | a :: b :: s => let (x, y) := split s;
                  (a :: x, b :: y)
 
-def mergesort [LE α] [@DecidableRel α (. ≤ .)] : List α → List α
+def mergesort : List α → List α
 | [ ]         => [ ]
 | [a]         => [a]
 | a :: b :: s => let (x, y) := split (a :: b :: s);
-                 merge (mergesort x) (mergesort y)
+                 have hxl : x.length < s.length.succ.succ :=
+                 by -- TODO prove for termination
+                   sorry
+                 have hyl : y.length < s.length.succ.succ :=
+                 by -- TODO prove for termination
+                   sorry
+                 merge (mergesort x) (mergesort y) -- the "body"
+-- the compiler needs the following hint to stay here
 termination_by mergesort l => l.length
-decreasing_by
-  simp_wf
-  sorry -- TODO prove termination
+
 
 #eval mergesort [3, 5, 7, 1, 9, 5, 0, 2, 4, 6, 8] -- 0..9 with 5 twice
 
-def sorted [LE α] : List α → Prop
+def sorted : List α → Prop
 | [ ]         => True
 | [_]         => True
 | a :: b :: _ => a ≤ b
 
 
--- ## Homework No.1
-theorem mergesort_sorts [LE α] [@DecidableRel α (. ≤ .)] (x : List α) :
+/- ## Homework No.1
+TODO we probably need to assume a total order (`≤` is a linear ordering on `α`) -/
+theorem mergesort_sorts (x : List α) :
   sorted (mergesort x) :=
 by
   sorry -- prove this by well-founded induction
--- TODO we probably need to assume a total order (`≤` is a linear ordering on `α`)
 
 /- ## Homework No.2
 Define `permutation x y : Prop` for `(x y : List α)` and prove:
