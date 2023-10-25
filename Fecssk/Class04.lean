@@ -1,4 +1,4 @@
-import Mathlib.Tactic.Have
+import Mathlib.Tactic.Linarith
 
 /-
 
@@ -111,11 +111,14 @@ def rev : List α → List α
 | [ ]    => [ ]
 | a :: x => cat (rev x) [a]
 
-def r : List α → List α → List α
+private def r : List α → List α → List α
 | [ ]   , y => y
 | a :: x, y => r x (a :: y)
 
-theorem rev_eq_r (x : List α) :
+def rev' (x : List α) : List α :=
+  r x []
+
+private lemma rev_eq_r (x : List α) :
   rev x = r x [] :=
 by
   -- starting by `induction x` would get us into a blind alley
@@ -137,10 +140,15 @@ by
   rw [cat_nil] at generalized
   exact generalized
 
+theorem rev_eq_rev' : @rev α = rev' :=
+by
+  ext1
+  apply rev_eq_r
+
 
 -- ### Sorting lists
 
-variable [LE α] [@DecidableRel α (· ≤ ·)]
+variable [LinearOrder α] [@DecidableRel α (· ≤ ·)]
 
 def merge : List α → List α → List α
 | [ ]   , y      => y
@@ -148,39 +156,76 @@ def merge : List α → List α → List α
 | a :: x, b :: y => if a ≤ b
                     then a :: merge x (b :: y)
                     else b :: merge (a :: x) y
-termination_by merge x y => x.length + y.length
+termination_by
+  merge x y => x.length + y.length
 
-def split : List α → List α × List α
-| [ ]         => ([ ], [ ])
-| [ a ]       => ([a], [ ])
-| a :: b :: s => let (x, y) := split s;
-                 (a :: x, b :: y)
+private def eo : List α → List α
+| [ ]         => [ ]
+| [ a ]       => [ a ]
+| a :: _ :: s => a :: eo s
+
+private lemma length_eo_cons (a : α) (s : List α) :
+  (eo s).length ≤ (eo (a :: s)).length ∧
+  (eo (a :: s)).length ≤ (eo s).length.succ :=
+by
+  induction s with
+  | nil => simp [eo]
+  | cons d l ih =>
+    cases l with
+    | nil => simp [eo, ih]
+    | cons d' l' =>
+      simp [eo] at ih ⊢
+      constructor
+      · exact ih.right
+      · apply Nat.succ_le_succ
+        exact ih.left
+
+private lemma length_eo2_lt (a b : α) (s : List α) :
+  (eo (a :: b :: s)).length < s.length.succ.succ :=
+by
+  induction s with
+  | nil => simp [eo]
+  | cons d l ih =>
+    cases l with
+    | nil => simp [eo, ih]
+    | cons d' l' =>
+      simp [eo] at ih ⊢
+      have not_longer := (length_eo_cons d' l').left
+      linarith
+
+private lemma length_eo1_lt (a : α) (s : List α) :
+  (eo (a :: s)).length < s.length.succ.succ :=
+by
+  cases s with
+  | nil => simp [eo]
+  | cons d l =>
+    apply (length_eo2_lt a d l).trans_le
+    apply Nat.succ_le_succ
+    apply Nat.succ_le_succ
+    exact Nat.le_succ l.length
 
 def mergesort : List α → List α
 | [ ]         => [ ]
-| [a]         => [a]
-| a :: b :: s => let (x, y) := split (a :: b :: s);
-                 have hxl : x.length < s.length.succ.succ :=
-                 by -- TODO prove for termination
-                   sorry
-                 have hyl : y.length < s.length.succ.succ :=
-                 by -- TODO prove for termination
-                   sorry
-                 merge (mergesort x) (mergesort y) -- the "body"
--- the compiler needs the following hint to stay here
+| [ a ]       => [ a ]
+| a :: b :: s => merge (mergesort (eo (a :: b :: s))) (mergesort (eo (b :: s)))
+-- the compiler needs the following hints
 termination_by mergesort l => l.length
+decreasing_by
+  simp_wf
+  simp [length_eo1_lt, length_eo2_lt]
 
-
-#eval mergesort [3, 5, 7, 1, 9, 5, 0, 2, 4, 6, 8] -- 0..9 with 5 twice
+private def testList : List ℕ := [3, 5, 7, 1, 9, 5, 0, 2, 4, 6, 8]
+#eval mergesort testList  -- 0..9 with 5 twice
+#eval mergesort (rev' testList) -- dtto
+#eval rev' (mergesort testList) -- dtto backwards
 
 def sorted : List α → Prop
 | [ ]         => True
-| [_]         => True
+| [ _ ]       => True
 | a :: b :: _ => a ≤ b
 
 
-/- ## Homework No.1
-TODO we probably need to assume a total order (`≤` is a linear ordering on `α`) -/
+-- ## Homework No.1
 theorem mergesort_sorts (x : List α) :
   sorted (mergesort x) :=
 by
