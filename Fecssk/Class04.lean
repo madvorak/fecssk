@@ -219,11 +219,11 @@ private def testList : List ℕ := [3, 5, 7, 1, 9, 5, 0, 2, 4, 6, 8]
 #eval mergesort (rev' testList) -- dtto
 #eval rev' (mergesort testList) -- dtto backwards
 
+
 def sorted : List α → Prop
 | [ ]         => True
 | [ _ ]       => True
-| a :: b :: _ => a ≤ b
-
+| a :: b :: s => a ≤ b ∧ sorted (b :: s)
 
 -- ## Homework No.1
 theorem mergesort_sorts (x : List α) :
