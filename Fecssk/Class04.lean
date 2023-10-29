@@ -221,25 +221,26 @@ private def testList : List ℕ := [3, 5, 7, 1, 9, 5, 0, 2, 4, 6, 8]
 #eval rev' (mergesort testList) -- dtto backwards
 
 
-def sorted : List α → Prop
+def Sorted : List α → Prop
 | [ ]         => True
 | [ _ ]       => True
-| a :: b :: s => a ≤ b ∧ sorted (b :: s)
+| a :: b :: s => a ≤ b ∧ Sorted (b :: s)
 
--- ## Homework No.1
-theorem mergesort_sorts (x : List α) :
-  sorted (mergesort x) :=
-by
-  sorry -- prove this by well-founded induction
-
-/- ## Homework No.2
-Define `permutation x y : Prop` for `(x y : List α)` and prove:
-`∀ x, permutation (mergesort x) x` -/
-
-/-- This lemma might come handy when solving the homework. -/
+-- This lemma might come handy when solving the homework:
 lemma dropWhile_head_false {l : List α} {P : α → Bool} (nonempty : l.dropWhile P ≠ []) :
   P ((l.dropWhile P).head nonempty) = false :=
 by
   induction l with
   | nil => simp [List.dropWhile] at nonempty
-  | cons d _ ih => by_cases P d <;> simp_all [List.dropWhile]
+  | cons a => by_cases P a <;> simp_all [List.dropWhile]
+
+/- ## Homework No.1
+Prove by well-founded induction: -/
+theorem mergesort_sorts (x : List α) :
+  Sorted (mergesort x) :=
+by
+  sorry
+
+/- ## Homework No.2
+Define `permutation x y : Prop` for `(x y : List α)` and prove:
+`∀ x, permutation (mergesort x) x` -/
