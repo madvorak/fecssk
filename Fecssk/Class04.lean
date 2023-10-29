@@ -159,6 +159,7 @@ def merge : List α → List α → List α
 termination_by
   merge x y => x.length + y.length
 
+/-- Creates a list made of every other element of given list, starting with its head.  -/
 private def eo : List α → List α
 | [ ]         => [ ]
 | [ a ]       => [ a ]
@@ -233,13 +234,12 @@ by
 
 /- ## Homework No.2
 Define `permutation x y : Prop` for `(x y : List α)` and prove:
-`∀ x, permutation x (mergesort x)` -/
+`∀ x, permutation (mergesort x) x` -/
 
-
-/- ## Homework No.3
-A ... living beings
-`∀ x, human x ^^^ monkey x`
-`∀ x y, x > y ↔ ∃ z, parent z y ∧ x > z`
-`>` is well founded
-Prove: [theorem will be sent by e-mail]
--/
+/-- This lemma might come handy when solving the homework. -/
+lemma dropWhile_head_false {l : List α} {P : α → Bool} (nonempty : l.dropWhile P ≠ []) :
+  P ((l.dropWhile P).head nonempty) = false :=
+by
+  induction l with
+  | nil => simp [List.dropWhile] at nonempty
+  | cons d _ ih => by_cases P d <;> simp_all [List.dropWhile]
