@@ -1,3 +1,4 @@
+import Mathlib.Data.List.Perm
 import Mathlib.Tactic.Linarith
 
 /-
@@ -235,12 +236,21 @@ by
   | cons a => by_cases P a <;> simp_all [List.dropWhile]
 
 /- ## Homework No.1
-Prove by well-founded induction: -/
-theorem mergesort_sorts (x : List α) :
-  Sorted (mergesort x) :=
+
+Mathlib (imported here) defines list permutations as follows.
+If `s` and `t` are lists of the same type, then `s ~ t` denotes that `s` is a permutation of `t`
+where `~` is a binary relation defined by the following four rules.
+• empty list is a permutation of empty list: `[] ~ []`
+• if `a` is an element and `x` and `y` are lists such that `x ~ y` then we have: `a :: x ~ a :: y`
+• if `a` and `b` are elements and `x` is a list then we have: `b :: a :: x ~ a :: b :: x`
+• if `x`, `y`, `z` are lists such that `x ~ y` and `y ~ z` then we have: `x ~ z`
+
+Prove the following theorem by well-founded induction. -/
+theorem mergesort_works : ∀ x : List α, Sorted (mergesort x) ∧ (mergesort x) ~ x :=
 by
   sorry
 
 /- ## Homework No.2
-Define `permutation x y : Prop` for `(x y : List α)` and prove:
-`∀ x, permutation (mergesort x) x` -/
+
+monkeys and humans
+TODO -/
