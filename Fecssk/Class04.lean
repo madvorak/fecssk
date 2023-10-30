@@ -249,18 +249,22 @@ where `~` is a binary relation defined by the following four rules.
 Prove the following theorem by well-founded induction. -/
 theorem mergesort_works : ∀ x : List α, Sorted (mergesort x) ∧ (mergesort x) ~ x :=
 by
-  sorry
+  sorry -- TODO homework!
 
 end sorting
 
 
 /- ## Homework No.2
 
-Prove both versions (below). -/
+Monkeys and Humans
+
+All `inductive` definitions in Lean are well-founded.
+
+Prove both versions of given theorem (below). -/
 
 
 -- instead of `parent(x,y)` we write `P x y`
--- instead of `x > y` we write `D1 P x y` where `D1` is a relation based on `P` as follows
+-- instead of `x > y` we write `D1 P x y` where `D1 P` is a relation based on `P` as follows
 inductive D1 (P : α → α → Prop) : α → α → Prop
   -- if `parent(x,y)` then `x > y`
   | direct (x y : α) (hxy : P x y) : D1 P x y
@@ -271,11 +275,11 @@ theorem exerciseD1 {H M : α → Prop} (HxorM : ∀ a : α, H a ∧ ¬ M a ∨ M
     {X Y : α} (monkey : M X) (human : H Y) {P : α → α → Prop} (hXY : D1 P X Y) :
   ∃ x y : α, P x y ∧ M x ∧ H y :=
 by
-  sorry
+  sorry -- TODO homework!
 
 
 -- instead of `parent(x,y)` we write `P x y`
--- instead of `x > y` we write `D2 P x y` where `D2` is a relation based on `P` as follows
+-- instead of `x > y` we write `D2 P x y` where `D2 P` is a relation based on `P` as follows
 inductive D2 (P : α → α → Prop) : α → α → Prop
   -- if `parent(x,y)` then `x > y`
   | direct (x y : α) (hxy : P x y) : D2 P x y
@@ -286,4 +290,4 @@ theorem exerciseD2 {H M : α → Prop} (HxorM : ∀ a : α, H a ∧ ¬ M a ∨ M
     {X Y : α} (monkey : M X) (human : H Y) {P : α → α → Prop} (hXY : D2 P X Y) :
   ∃ x y : α, P x y ∧ M x ∧ H y :=
 by
-  sorry
+  sorry -- TODO homework!
