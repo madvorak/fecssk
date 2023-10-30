@@ -53,7 +53,7 @@ Infinite binary trees:
 In order to show `∀ x, K x → x ∈ S`
 it suffices to show that `K` is backward-closed.
 For each rule `r` and conclusion `x` of `r`,
-assume assume `K x`,
+assume `K x`,
 show for each premise `y` of `r` that `K y`.
 
 
@@ -149,6 +149,7 @@ by
 
 -- ### Sorting lists
 
+section sorting
 variable [LinearOrder α] [@DecidableRel α (· ≤ ·)]
 
 def merge : List α → List α → List α
@@ -250,7 +251,39 @@ theorem mergesort_works : ∀ x : List α, Sorted (mergesort x) ∧ (mergesort x
 by
   sorry
 
+end sorting
+
+
 /- ## Homework No.2
 
-monkeys and humans
-TODO -/
+Prove both versions (below). -/
+
+
+-- instead of `parent(x,y)` we write `P x y`
+-- instead of `x > y` we write `D1 P x y` where `D1` is a relation based on `P` as follows
+inductive D1 (P : α → α → Prop) : α → α → Prop
+  -- if `parent(x,y)` then `x > y`
+  | direct (x y : α) (hxy : P x y) : D1 P x y
+  -- if `parent(x,z)` and `z > y` then `x > y`
+  | distant (x z y : α) (hxz : P x z) (hzy : D1 P z y) : D1 P x y
+
+theorem exerciseD1 {H M : α → Prop} (HxorM : ∀ a : α, H a ∧ ¬ M a ∨ M a ∧ ¬ H a)
+    {X Y : α} (monkey : M X) (human : H Y) {P : α → α → Prop} (hXY : D1 P X Y) :
+  ∃ x y : α, P x y ∧ M x ∧ H y :=
+by
+  sorry
+
+
+-- instead of `parent(x,y)` we write `P x y`
+-- instead of `x > y` we write `D2 P x y` where `D2` is a relation based on `P` as follows
+inductive D2 (P : α → α → Prop) : α → α → Prop
+  -- if `parent(x,y)` then `x > y`
+  | direct (x y : α) (hxy : P x y) : D2 P x y
+  -- if `x > z` and `parent(z,y)` then `x > y`
+  | distant (x z y : α) (hxz : D2 P x z) (hzy : P z y) : D2 P x y
+
+theorem exerciseD2 {H M : α → Prop} (HxorM : ∀ a : α, H a ∧ ¬ M a ∨ M a ∧ ¬ H a)
+    {X Y : α} (monkey : M X) (human : H Y) {P : α → α → Prop} (hXY : D2 P X Y) :
+  ∃ x y : α, P x y ∧ M x ∧ H y :=
+by
+  sorry
