@@ -83,6 +83,31 @@ Example (prove `φ → φ` in Hilbert system):
 (K) `φ → ψ → φ`
 (MP) `φ → φ`
 
+-/
+
+prelude -- This line suppresses "standard Lean stuff".
+
+
+abbrev MP {φ ψ : Prop} (p : φ) (q : φ → ψ) : ψ := q p
+
+axiom K (φ ψ : Prop) : φ → ψ → φ
+
+axiom S (φ ψ χ : Prop) : (φ → ψ → χ) → (φ → ψ) → (φ → χ)
+
+-- axiom em (φ ψ : Prop) : (¬φ → ¬ψ) → (ψ → φ)
+
+
+-- Note that this is NOT a tactic block:
+example (a b : Prop) :=
+  have h1 := K a (b → a)
+  have h2 := S a (b → a) a
+  have h3 := MP h1 h2
+  have h4 := K a b
+  show a → a
+        from MP h4 h3
+
+/-
+
 Notation: `Γ ⊢ φ` means `F ∪ {Γ}`-under-turnstile `φ` (the set of formulas `Γ` is used as added axioms)
 Metatheorem ("deduction theorem"):
 `Γ ⊢ φ → ψ` iff `Γ, φ ⊢ ψ`
@@ -92,8 +117,14 @@ Metaproof:
 Assume `ψ` has a proof `π` using axioms `Γ`, `φ`, (K), (S), (em).
 Show `φ → ψ` has a proof using `Γ`, (K), (S), (em).
 Induction on length `n` of `π`.
-Case `n=1`: `ψ` must be an axiom. Case analysis. TODO.
-Case `n>1`: `ψ` is the application of modus ponens. TODO.
+Case `n=1`: `ψ` must be an axiom.
+Either `ψ ∈ Γ ∪ {K, S, em}` so we prove it by (K),
+or `ψ = φ` so we use `⊢ φ → φ` as derived above.
+Case `n>1`: `ψ` is the result of an application of modus ponens.
+We have `χ` and `χ → ψ`, both of which were derived from `Γ, φ` in fewer steps.
+Induction hypothesis gives us `Γ ⊢ φ → χ` and `Γ ⊢ φ → χ → ψ`.
+We use (S) in the form `(φ → χ → ψ) → (φ → χ) → (φ → ψ)` and apply modus ponens twice,
+resulting in `φ → ψ` derived from `Γ` only.
 
 #### Homework
 
