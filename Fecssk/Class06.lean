@@ -88,8 +88,8 @@ Example (prove `φ → φ` in Hilbert system):
 section Hilbert
 
 axiom _imp : Prop → Prop → Prop
-infixr:40 " ⇒ " => _imp
 axiom _not : Prop → Prop
+infixr:40 " ⇒ " => _imp
 prefix:99 " ⌝ " => _not
 
 axiom MP {φ ψ : Prop} (_ : φ) (_ : φ ⇒ ψ) : ψ
@@ -99,22 +99,22 @@ axiom EM (φ ψ : Prop) : (⌝φ ⇒ ⌝ψ) ⇒ (ψ ⇒ φ)
 
 
 example (a b : Prop) :=
-  have h1 := K a (b ⇒ a)
-  have h2 := S a (b ⇒ a) a
-  have h3 := MP h1 h2
-  have h4 := K a b
+  have h1 := K a b
+  have h2 := K a (b ⇒ a)
+  have h3 := S a (b ⇒ a) a
+  have h4 := MP h2 h3
   show a ⇒ a
-        from MP h4 h3
+        from MP h1 h4
 
 example (a b c : Prop) :=
-  have h1 := S (b ⇒ c) (a ⇒ b ⇒ c) ((a ⇒ b) ⇒ (a ⇒ c))
+  have h1 := K (b ⇒ c) a
   have h2 := S a b c
   have h3 := K ((a ⇒ b ⇒ c) ⇒ ((a ⇒ b) ⇒ (a ⇒ c))) (b ⇒ c)
   have h4 := MP h2 h3
-  have h5 := MP h4 h1
-  have h6 := K (b ⇒ c) a
+  have h5 := S (b ⇒ c) (a ⇒ b ⇒ c) ((a ⇒ b) ⇒ (a ⇒ c))
+  have h6 := MP h4 h5
   show (b ⇒ c) ⇒ (a ⇒ b) ⇒ (a ⇒ c)
-        from MP h6 h5
+        from MP h1 h6
 
 end Hilbert
 
