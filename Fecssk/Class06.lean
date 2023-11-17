@@ -85,26 +85,34 @@ Example (prove `φ → φ` in Hilbert system):
 
 -/
 
-prelude -- This line suppresses "standard Lean stuff".
+axiom _imp : Prop → Prop → Prop
+infix:40 " ⇒ " => _imp
+axiom _not : Prop → Prop
+prefix:99 " ⌝ " => _not
+
+axiom MP {φ ψ : Prop} (_ : φ) (_ : φ ⇒ ψ) : ψ
+axiom K (φ ψ : Prop) : φ ⇒ (ψ ⇒ φ)
+axiom S (φ ψ χ : Prop) : (φ ⇒ (ψ ⇒ χ)) ⇒ ((φ ⇒ ψ) ⇒ (φ ⇒ χ))
+axiom EM (φ ψ : Prop) : (⌝φ ⇒ ⌝ψ) ⇒ (ψ ⇒ φ)
 
 
-abbrev MP {φ ψ : Prop} (p : φ) (q : φ → ψ) : ψ := q p
-
-axiom K (φ ψ : Prop) : φ → ψ → φ
-
-axiom S (φ ψ χ : Prop) : (φ → ψ → χ) → (φ → ψ) → (φ → χ)
-
--- axiom em (φ ψ : Prop) : (¬φ → ¬ψ) → (ψ → φ)
-
-
--- Note that this is NOT a tactic block:
 example (a b : Prop) :=
-  have h1 := K a (b → a)
-  have h2 := S a (b → a) a
+  have h1 := K a (b ⇒ a)
+  have h2 := S a (b ⇒ a) a
   have h3 := MP h1 h2
   have h4 := K a b
-  show a → a
+  show a ⇒ a
         from MP h4 h3
+
+example (a b c : Prop) :=
+  have h1 := S (b ⇒ c) (a ⇒ (b ⇒ c)) ((a ⇒ b) ⇒ (a ⇒ c))
+  have h2 := S a b c
+  have h3 := K ((a ⇒ (b ⇒ c)) ⇒ ((a ⇒ b) ⇒ (a ⇒ c))) (b ⇒ c)
+  have h4 := MP h2 h3
+  have h5 := MP h4 h1
+  have h6 := K (b ⇒ c) a
+  show (b ⇒ c) ⇒ ((a ⇒ b) ⇒ (a ⇒ c))
+        from MP h6 h5
 
 /-
 
@@ -125,9 +133,5 @@ We have `χ` and `χ → ψ`, both of which were derived from `Γ, φ` in fewer 
 Induction hypothesis gives us `Γ ⊢ φ → χ` and `Γ ⊢ φ → χ → ψ`.
 We use (S) in the form `(φ → χ → ψ) → (φ → χ) → (φ → ψ)` and apply modus ponens twice,
 resulting in `φ → ψ` derived from `Γ` only.
-
-#### Homework
-
-Prove `(φ → ψ) → (ψ → χ) → (φ → χ)` in Hilbert system.
 
 -/

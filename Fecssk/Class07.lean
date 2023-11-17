@@ -37,10 +37,10 @@ example (P Q : Prop) : (P → Q) → (¬Q → ¬P) := by
 
 /-
 
-Homework #1: prove transitivity of implication.
-
 The system above is called NJ (Natural deduction, Intuitionistic).
 When we add the excluded middle, we get MK (Natural deduction, Classical).
+
+Homework #1: prove transitivity of implication in NJ.
 
 Theorem: There exist two irrational numbers (`a b ∉ ℚ`) such that
 one to the power of the other is a rational number (`a^b ∈ ℚ`).
