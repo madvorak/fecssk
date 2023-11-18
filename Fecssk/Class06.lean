@@ -87,12 +87,13 @@ Example (prove `φ → φ` in Hilbert system):
 
 section Hilbert
 
-axiom _imp : Prop → Prop → Prop
-axiom _not : Prop → Prop
-infixr:40 " ⇒ " => _imp
-prefix:99 " ⌝ " => _not
+axiom _imp_ : Prop → Prop → Prop
+axiom _not_ : Prop → Prop
+infixr:40 " ⇒ " => _imp_
+prefix:99 " ⌝ " => _not_
 
 axiom MP {φ ψ : Prop} (_ : φ) (_ : φ ⇒ ψ) : ψ
+
 axiom K (φ ψ : Prop) : φ ⇒ (ψ ⇒ φ)
 axiom S (φ ψ χ : Prop) : (φ ⇒ ψ ⇒ χ) ⇒ ((φ ⇒ ψ) ⇒ (φ ⇒ χ))
 axiom EM (φ ψ : Prop) : (⌝φ ⇒ ⌝ψ) ⇒ (ψ ⇒ φ)

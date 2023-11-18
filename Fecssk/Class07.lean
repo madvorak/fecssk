@@ -78,9 +78,9 @@ by
 
 /-
 
-#### Kripke semanitics
+#### Kripke semantics
 
-Kripke semanitics for which NJ is sound and complete.
+Kripke semantics for which NJ is sound and complete.
 Classically: `v : P → Bool`
 Intuitionistically: `m = (W, ≤, w₀, v : W × P → Bool)`
 `W` is a "set of classical worlds" with preorder `≤` and initial world `w₀` such that:
