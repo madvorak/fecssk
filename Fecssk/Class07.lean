@@ -19,11 +19,19 @@ Formal system for natural deduction defines "meta ⊢" such: ⊢ `(Γ ⊢ φ)`
 ----------- (And elim)          ----------- (And elim)         --------------------- (And intro)
 `Γ ⊢ φ`                         `Γ ⊢ ψ`                             `Γ ⊢ φ ∧ ψ`
 
-`Γ ⊢ φ ∨ ψ`     `Γ, φ ⊢ χ`     `Γ, φ ⊢ χ`
------------------------------------------ (Or elim)
-                  `Γ ⊢ χ`
+`Γ ⊢ φ ∨ ψ`     `Γ, φ ⊢ χ`     `Γ, φ ⊢ χ`                  `Γ ⊢ φ`                    `Γ ⊢ φ`
+----------------------------------------- (Or elim)      ----------- (Or intro)     ----------- (Or intro)
+                 `Γ ⊢ χ`                                 `Γ ⊢ φ ∨ ψ`                `Γ ⊢ ψ ∨ φ`
 
-TODO (Or intro (two rules)) (Not elim (instance of MP)) (Not intro) (Impl elim (MP)) (Impl intro)
+`Γ ⊢ φ`     `Γ ⊢ ¬φ`                 `Γ, φ ⊢ ⊥`
+-------------------- (Not elim)      ---------- (Not intro)
+      `Γ ⊢ ⊥`                         `Γ ⊢ ¬φ`
+
+`Γ ⊢ φ`       `Γ ⊢ φ → ψ`                        `Γ, φ  ⊢ ψ`
+------------------------- (Impl elim)            ----------- (Impl intro)
+       `Γ ⊢ ⊥`                                   `Γ ⊢ φ → ψ`
+
+Note that (Impl elim) is MP, and so is (Not elim) when negation is undertstood as a function.
 
 -/
 
@@ -38,7 +46,7 @@ example (P Q : Prop) : (P → Q) → (¬Q → ¬P) := by
 /-
 
 The system above is called NJ (Natural deduction, Intuitionistic).
-When we add the excluded middle, we get MK (Natural deduction, Classical).
+When we add the excluded middle, we get NK (Natural deduction, Classical).
 
 Homework #1: prove transitivity of implication in NJ.
 

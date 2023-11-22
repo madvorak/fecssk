@@ -51,7 +51,7 @@ We can view them as implications where LHS is a conjunction of positive proposit
 
 Countable set `Γ` of formulas is satisfiable iff every finite subset of `Γ` is satisfiable.
 
-#### Interpolation (Craig)
+#### Craig's interpolation
 
 `⊢ φ → ψ` iff there exists a third formula `χ` (the "interpolant") which only uses
 nonlogical symbols (in propositional logic, it is propositions only) that occur in
@@ -63,21 +63,24 @@ How hard is it to compute interpolants in propositional logic?
 
 #### Cut elimination
 
-Cut rule in NK / NJ:
+##### Cut rule in NK / NJ
 
 `Γ ⊢ φ`       `Γ, φ ⊢ ψ`
 ------------------------
        `Γ ⊢ ψ`
 
-Cut rule in LK:
+##### Cut rule in LK:
 
 `Γ ⊢ φ, Δ`       `Γ, φ ⊢ Δ`
 ---------------------------
           `Γ ⊢ Δ`
 
-It is a purely syntactic theorem. We cannot use deduction.
+##### Eliminating the cuts
 
-If a judgement can be proved with the cut rule, it can also be proved without the cut rule (but the proof may be longer).
+If a judgement can be proved with the cut rule, it can also be proved without the cut rule.
+In fact, it is "iff"; the other direction is trivial.
+Of course, the proof may become longer (introducing a lemma `φ` often helps in practice).
+It is a purely syntactic metatheorem. We cannot use deduction to prove it.
 
 
 # First-order logic
@@ -114,6 +117,9 @@ A variable that is not bound is called free.
 
 ### Safe substitution
 
-We must rename TODO.
+`∀x, ∃y, y ≥ x + 1`
+If we want to substitute `y²` for `x`, we must first rename `y` to `z` and then substitute.
+`∀x, ∃z, z ≥ x + 1`
+`∃z, z ≥ y² + 1`
 
 -/
