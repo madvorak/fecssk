@@ -26,6 +26,8 @@
 
 [2023-11-30](Fecssk/Class10.lean)
 
+[2023-12-05](Fecssk/Class11.lean)
+
 ## How to Lean 4
 
 ### Setup Lean
