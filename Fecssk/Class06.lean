@@ -88,26 +88,25 @@ Example (prove `φ → φ` in Hilbert system):
 section Hilbert
 
 axiom _imp_ : Prop → Prop → Prop
-axiom _not_ : Prop → Prop
 infixr:40 " ⇒ " => _imp_
-prefix:99 " ⌝ " => _not_
+axiom F : Prop
 
 axiom MP {φ ψ : Prop} (_ : φ) (_ : φ ⇒ ψ) : ψ
 
 axiom K (φ ψ : Prop) : φ ⇒ (ψ ⇒ φ)
 axiom S (φ ψ χ : Prop) : (φ ⇒ ψ ⇒ χ) ⇒ ((φ ⇒ ψ) ⇒ (φ ⇒ χ))
-axiom EM (φ ψ : Prop) : (⌝φ ⇒ ⌝ψ) ⇒ (ψ ⇒ φ)
+axiom EM (φ ψ : Prop) : ((φ ⇒ F) ⇒ (ψ ⇒ F)) ⇒ (ψ ⇒ φ)
 
 
-example (a b : Prop) :=
-  have h1 := K a b
-  have h2 := K a (b ⇒ a)
-  have h3 := S a (b ⇒ a) a
+theorem H_self (a : Prop) : a ⇒ a :=
+  have h1 := K a a
+  have h2 := K a (a ⇒ a)
+  have h3 := S a (a ⇒ a) a
   have h4 := MP h2 h3
   show a ⇒ a
         from MP h1 h4
 
-example (a b c : Prop) :=
+theorem H_transwap (a b c : Prop) : (b ⇒ c) ⇒ (a ⇒ b) ⇒ (a ⇒ c) :=
   have h1 := K (b ⇒ c) a
   have h2 := S a b c
   have h3 := K ((a ⇒ b ⇒ c) ⇒ ((a ⇒ b) ⇒ (a ⇒ c))) (b ⇒ c)
@@ -116,6 +115,40 @@ example (a b c : Prop) :=
   have h6 := MP h4 h5
   show (b ⇒ c) ⇒ (a ⇒ b) ⇒ (a ⇒ c)
         from MP h1 h6
+
+theorem H_dni (p : Prop) : p ⇒ ((p ⇒ F) ⇒ F) :=
+  have h01 := K (p ⇒ F) (p ⇒ F)
+  have h02 := K (p ⇒ F) ((p ⇒ F) ⇒ (p ⇒ F))
+  have h03 := S (p ⇒ F) ((p ⇒ F) ⇒ (p ⇒ F)) (p ⇒ F)
+  have h04 := MP h02 h03
+  have h05 := MP h01 h04
+  have h1 := S (p ⇒ F) p F
+  have h2 := MP h05 h1
+  have h3 := K (((p ⇒ F) ⇒ p) ⇒ ((p ⇒ F) ⇒ F)) p
+  have h4 := MP h2 h3
+  have h5 := S p ((p ⇒ F) ⇒ p) ((p ⇒ F) ⇒ F)
+  have h6 := MP h4 h5
+  have h7 := K p (p ⇒ F)
+  show p ⇒ ((p ⇒ F) ⇒ F)
+        from MP h7 h6
+
+theorem H_dne (p : Prop) : ((p ⇒ F) ⇒ F) ⇒ p :=
+  have h01 := K ((p ⇒ F) ⇒ F) ((p ⇒ F) ⇒ F)
+  have h02 := K ((p ⇒ F) ⇒ F) (((p ⇒ F) ⇒ F) ⇒ ((p ⇒ F) ⇒ F))
+  have h03 := S ((p ⇒ F) ⇒ F) (((p ⇒ F) ⇒ F) ⇒ ((p ⇒ F) ⇒ F)) ((p ⇒ F) ⇒ F)
+  have h04 := MP h02 h03
+  have h05 := MP h01 h04
+  have h1 := S ((p ⇒ F) ⇒ F) (p ⇒ F) F
+  have h2 := MP h05 h1
+  have h3 := K ((((p ⇒ F) ⇒ F) ⇒ (p ⇒ F)) ⇒ (((p ⇒ F) ⇒ F) ⇒ F)) (p ⇒ F)
+  have h4 := MP h2 h3
+  have h5 := S (p ⇒ F) (((p ⇒ F) ⇒ F) ⇒ (p ⇒ F)) (((p ⇒ F) ⇒ F) ⇒ F)
+  have h6 := MP h4 h5
+  have h7 := K (p ⇒ F) ((p ⇒ F) ⇒ F)
+  have h8 := MP h7 h6
+  have h9 := EM p ((p ⇒ F) ⇒ F)
+  show ((p ⇒ F) ⇒ F) ⇒ p
+        from MP h8 h9
 
 end Hilbert
 
