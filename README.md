@@ -46,6 +46,8 @@
 
 [Code from my minicourse](https://github.com/madvorak/lean4-course) (took place at ISTA in 2023-09)
 
+[Code from my tutorial](https://github.com/madvorak/lean4-tutorial) (took place at ISTA in 2024-02)
+
 [Some motivation](https://youtu.be/Dp-mQ3HxgDE?si=pldjVR-MMh5TXCai)
 
 [More motivation](https://youtu.be/KW8zEdOWxYI?si=4Iz9M56WTEq4Kpo6)
